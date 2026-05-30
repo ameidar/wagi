@@ -18,7 +18,7 @@
    - Framework preset: None
    - Build command: להשאיר ריק
    - Build output directory: `/`
-5. אחרי הפריסה מחברים Custom domain: `wagi.hai.tech`.
+5. אחרי הפריסה מחברים Custom domain: `wagi.co.il`.
 
 ## סוכן Opal
 
