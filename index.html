@@ -112,5 +112,21 @@
 
     <script src="./script.js"></script>
     <script src="https://opal.hai.tech/embed/widget.js" data-opal-agent="wagi" data-opal-key="pub_Ph_eKCt6CPPLpk7NNhxva3vH" data-opal-language="he" async></script>
+
+    <style>
+      #wagi-voice-widget-root { inset: auto auto 20px 20px !important; }
+      #wagi-voice-widget-root .wagi-widget-panel { right: auto !important; left: 0 !important; }
+      @media (max-width: 540px) { #wagi-voice-widget-root { inset: auto 12px 84px 12px !important; } }
+    </style>
+    <script>
+      window.WagiVoiceAgent = {
+        apiBaseUrl: "https://wagi-voice.orma-ai.com",
+        mountId: "wagi-voice-agent",
+        buttonLabel: "דברו עם Wagi בקול",
+        title: "Wagi — שיחה קולית"
+      };
+    </script>
+    <script src="https://wagi-voice.orma-ai.com/wagi-widget.js" defer></script>
+    <div id="wagi-voice-agent"></div>
   </body>
 </html>
