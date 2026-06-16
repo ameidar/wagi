@@ -1,0 +1,33 @@
+{
+  "agentName": "Wagi",
+  "packageType": "opal-branded-voice-avatar",
+  "version": "2.0.0",
+  "character": {
+    "businessType": "Wagi הוא סוכן השוואת ביטוחי חיות מחמד בישראל. הוא עוזר לבעלי כלבים וחתולים להבין איזה ביטוח מתאים להם, להשוות בין חברות לפי נתונים, לתת המלצה קצרה וברורה, ולבסוף לאסוף ליד בעדינות כשיש עניין.",
+    "appearance": "Friendly young male veterinarian, flat cartoon style, blue scrubs, stethoscope",
+    "gender": "male",
+    "approximateAge": "28-35",
+    "visualStyle": "friendly flat cartoon vector illustration",
+    "bodyScope": "head and upper shoulders, circular framing"
+  },
+  "voice": {
+    "language": "Hebrew",
+    "tone": "warm, direct, concise",
+    "gender": "male",
+    "pace": "medium"
+  },
+  "files": {
+    "avatarMouthClosed": "avatar/avatar-mouth-closed.png",
+    "avatarMouthOpen": "avatar/avatar-mouth-open.png",
+    "liveWsPath": "/voice-avatar-ws",
+    "packageUrl": "https://wagi.co.il/avatar-packages/wagi-vet-v1/",
+    "embedScript": "https://opal.hai.tech/embed/voice-avatar.js"
+  },
+  "packageId": "wagi-vet-v1",
+  "createdAt": "2026-06-16T08:50:00.000Z",
+  "generation": {
+    "mode": "gemini-mouth-frames",
+    "provider": "gemini-3.1-flash-image-preview",
+    "note": "Vet character matching site hero; lip-sync via closed/open frame crossfade"
+  }
+}
