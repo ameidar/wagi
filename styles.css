@@ -383,6 +383,8 @@ h3 {
   .nav-links { width: 100%; overflow-x: auto; justify-content: space-between; }
   .section-grid { grid-template-columns: 1fr; }
   .hero { padding-top: 28px; }
+  .hero-copy { text-align: center; }
+  .hero-actions { justify-content: center; }
   .hero-visual { order: -1; }
   .cards-grid { grid-template-columns: 1fr; }
   .page-shell::before, .page-shell::after { display: none; }
