@@ -60,7 +60,7 @@ a {
 .site-header {
   position: relative;
   z-index: 2;
-  min-height: 80px;
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -130,7 +130,7 @@ a {
 }
 
 .hero {
-  padding: 40px 0 64px;
+  padding: 8px 0 56px;
 }
 
 .eyebrow {
@@ -236,16 +236,6 @@ h3 {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 32px;
-}
-
-.hero-visual::before {
-  content: "";
-  position: absolute;
-  inset: 8% 4% 4% 8%;
-  border-radius: 40px;
-  background: radial-gradient(circle at 60% 40%, rgba(37, 99, 235, 0.1), transparent 60%);
-  z-index: -1;
 }
 
 .agent-badge {
@@ -382,7 +372,7 @@ h3 {
   }
   .nav-links { width: 100%; overflow-x: auto; justify-content: space-between; }
   .section-grid { grid-template-columns: 1fr; }
-  .hero { padding-top: 28px; }
+  .hero { padding-top: 8px; }
   .hero-copy { text-align: center; }
   .hero-actions { justify-content: center; }
   .hero-visual { order: -1; }
