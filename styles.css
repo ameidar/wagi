@@ -156,11 +156,24 @@ a {
   margin: 0 6px;
 }
 
-.wagi-header .menu,
-.wagi-header .search {
-  font-size: 44px;
+.wagi-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  direction: rtl;
+}
+
+.wagi-nav a {
+  padding: 8px 14px;
+  border-radius: 999px;
   color: #1147ad;
-  line-height: 1;
+  font-weight: 700;
+  font-size: 16px;
+  transition: 180ms ease;
+}
+
+.wagi-nav a:hover {
+  background: #eaf3ff;
 }
 
 .hero-content h1 {
@@ -189,13 +202,13 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 620px;
-  height: 86px;
-  margin: 0 auto 22px;
+  max-width: 420px;
+  height: 60px;
+  margin: 0 auto 16px;
   border-radius: 999px;
   text-decoration: none;
-  font-size: clamp(26px, 5vw, 42px);
-  font-weight: 900;
+  font-size: clamp(18px, 3vw, 22px);
+  font-weight: 800;
   transition: 180ms ease;
 }
 
@@ -265,7 +278,8 @@ a {
   .wagi-header { margin-bottom: 40px; }
   .wagi-header .logo { font-size: 32px; }
   .wagi-header .logo span { width: 44px; height: 44px; }
-  .wagi-header .menu, .wagi-header .search { font-size: 34px; }
+  .wagi-nav { gap: 2px; }
+  .wagi-nav a { padding: 6px 8px; font-size: 13px; }
   .chat-avatar { width: 96px; height: 96px; top: 49%; inset-inline-end: 14px; }
   .chat-avatar span { width: 40px; height: 40px; font-size: 20px; }
 }
