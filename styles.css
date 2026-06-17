@@ -117,6 +117,80 @@ a {
   padding: 8px 0 56px;
 }
 
+.hero-stack {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.hero-title {
+  position: relative;
+  max-width: 760px;
+  margin-bottom: 26px;
+  color: var(--ink);
+  font-size: clamp(2.3rem, 5.6vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+
+.hero-title .accent-line { color: var(--primary); }
+
+.hero-title .paw,
+.hero-title .heart {
+  position: absolute;
+  color: var(--primary);
+  opacity: 0.55;
+  font-size: 1.6rem;
+  pointer-events: none;
+}
+.hero-title .paw-1 { inset-inline-start: -10px; top: 18%; transform: rotate(-12deg); }
+.hero-title .paw-2 { inset-inline-start: -36px; top: 46%; transform: rotate(8deg); font-size: 1.3rem; }
+.hero-title .heart { inset-inline-end: -18px; top: 8%; font-size: 1.9rem; opacity: 0.45; }
+
+.hero-stack .hero-text {
+  max-width: 600px;
+  margin-bottom: 12px;
+}
+
+.hero-stack .hero-actions {
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+  margin-bottom: 44px;
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.22);
+  background: var(--bg-blue);
+}
+
+.hero-stack .hero-visual {
+  width: min(720px, 100%);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.hero-stack .hero-visual img {
+  border-radius: 28px;
+}
+
 .eyebrow {
   display: inline-block;
   margin: 0 0 18px;
@@ -358,8 +432,9 @@ h3 {
   .section-grid { grid-template-columns: 1fr; }
   .hero { padding-top: 8px; }
   .hero-copy { text-align: center; }
-  .hero-actions { justify-content: center; }
-  .hero-visual { order: -1; }
+  .section-grid .hero-actions { justify-content: center; }
+  .section-grid .hero-visual { order: -1; }
+  .hero-stack .hero-visual { order: 0; }
   .cards-grid { grid-template-columns: 1fr; }
 }
 
