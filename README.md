@@ -6,7 +6,7 @@
 
 - `index.html` — מבנה האתר והטמעת סוכן Opal
 - `styles.css` — עיצוב RTL מודרני
-- `script.js` — JS מינימלי
+- `script.js` — JS מינימלי + מיקום הסוכן הקולי במרכז המסך
 - `PROJECT.md` — גבולות הפרויקט
 
 ## פריסה ב־Cloudflare Pages
@@ -22,8 +22,14 @@
 
 ## סוכן Opal
 
-הקוד מוטמע בסוף `index.html`:
+הקוד הקולי מוטמע בסוף `index.html`, והצ׳אט הטקסטואלי הוסר כדי להשאיר רק את הסוכן הקולי:
 
 ```html
-<script src="https://opal.hai.tech/embed/widget.js" data-opal-agent="wagi" data-opal-key="pub_Ph_eKCt6CPPLpk7NNhxva3vH" data-opal-language="he" async></script>
+<script
+  src="https://opal.hai.tech/embed/voice-avatar.js"
+  data-opal-agent-id="wagi"
+  data-opal-package-url="https://wagi.co.il/avatar-packages/wagi-vet-v1/"
+  data-opal-language="he"
+  data-opal-position="bottom-left"
+  async></script>
 ```
