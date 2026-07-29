@@ -20,6 +20,18 @@
    - Build output directory: `/`
 5. אחרי הפריסה מחברים Custom domain: `wagi.co.il`.
 
+## כניסה מוגנת
+
+האתר מוגן דרך Cloudflare Pages Functions. מי שנכנס בלי session פעיל מקבל מסך התחברות בעברית.
+
+משתני סביבה מומלצים ב־Cloudflare:
+
+- `WAGI_AUTH_USER` — שם המשתמש
+- `WAGI_AUTH_PASS` — הסיסמה
+- `WAGI_AUTH_SECRET` — מחרוזת ארוכה ואקראית לחתימת session
+
+אם המשתנים לא מוגדרים, יש פרטי כניסה זמניים בקוד לטובת בדיקות בלבד.
+
 ## סוכן Opal
 
 הקוד הקולי מוטמע בסוף `index.html`, והצ׳אט הטקסטואלי הוסר כדי להשאיר רק את הסוכן הקולי:
