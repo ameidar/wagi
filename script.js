@@ -9,6 +9,7 @@ updateHeaderState();
 window.addEventListener('scroll', updateHeaderState, { passive: true });
 
 let voiceAgentObserver = null;
+let voiceAgentWasDragged = false;
 
 const VOICE_AGENT_OVERRIDE_ID = 'wagi-voice-agent-layout-override';
 const VOICE_AGENT_SIZE = 'clamp(100px, 8vw, 118px)';
@@ -43,12 +44,7 @@ const positionVoiceAgent = () => {
 
       .wrap {
         position: fixed !important;
-        left: var(--wagi-agent-edge-gap) !important;
-        top: var(--wagi-agent-edge-gap) !important;
-        right: auto !important;
-        bottom: auto !important;
         width: var(--wagi-agent-size) !important;
-        transform: none !important;
         z-index: 2147483647 !important;
       }
 
@@ -65,8 +61,8 @@ const positionVoiceAgent = () => {
       .permission {
         left: 0 !important;
         right: auto !important;
-        top: calc(var(--wagi-agent-size) + 14px) !important;
-        bottom: auto !important;
+        top: auto !important;
+        bottom: calc(var(--wagi-agent-size) + 14px) !important;
       }
 
       .chat-toggle,
@@ -80,13 +76,16 @@ const positionVoiceAgent = () => {
   }
 
   setImportant(wrap, 'position', 'fixed');
-  setImportant(wrap, 'left', VOICE_AGENT_EDGE_GAP);
-  setImportant(wrap, 'top', VOICE_AGENT_EDGE_GAP);
-  setImportant(wrap, 'right', 'auto');
-  setImportant(wrap, 'bottom', 'auto');
   setImportant(wrap, 'width', VOICE_AGENT_SIZE);
-  setImportant(wrap, 'transform', 'none');
   setImportant(wrap, 'z-index', '2147483647');
+
+  if (!voiceAgentWasDragged) {
+    setImportant(wrap, 'left', VOICE_AGENT_EDGE_GAP);
+    setImportant(wrap, 'right', 'auto');
+    setImportant(wrap, 'top', 'auto');
+    setImportant(wrap, 'bottom', VOICE_AGENT_EDGE_GAP);
+    setImportant(wrap, 'transform', 'none');
+  }
 
   const chatToggle = shadow.querySelector('.chat-toggle');
   if (chatToggle) {
@@ -105,30 +104,52 @@ const positionVoiceAgent = () => {
   return true;
 };
 
-const keepVoiceAgentCentered = () => {
+const trackVoiceAgentDrag = () => {
+  const host = document.getElementById('opal-voice-avatar-wagi');
+  const shadow = host?.shadowRoot;
+  const bubble = shadow?.querySelector('.bubble');
+  if (!bubble || bubble.dataset.wagiDragTracked === 'true') return;
+
+  bubble.dataset.wagiDragTracked = 'true';
+
+  let startX = 0;
+  let startY = 0;
+
+  bubble.addEventListener('pointerdown', (event) => {
+    startX = event.clientX;
+    startY = event.clientY;
+  });
+
+  bubble.addEventListener('pointermove', (event) => {
+    if (Math.abs(event.clientX - startX) + Math.abs(event.clientY - startY) > 6) {
+      voiceAgentWasDragged = true;
+    }
+  });
+};
+
+const keepVoiceAgentPlaced = () => {
   if (!positionVoiceAgent()) return;
+  trackVoiceAgentDrag();
   if (voiceAgentObserver) return;
 
   const host = document.getElementById('opal-voice-avatar-wagi');
   const shadow = host?.shadowRoot;
   if (!shadow) return;
 
-  voiceAgentObserver = new MutationObserver(positionVoiceAgent);
-  voiceAgentObserver.observe(shadow, {
-    attributes: true,
-    attributeFilter: ['style', 'class'],
-    childList: true,
-    subtree: true,
+  voiceAgentObserver = new MutationObserver(() => {
+    positionVoiceAgent();
+    trackVoiceAgentDrag();
   });
+  voiceAgentObserver.observe(shadow, { childList: true, subtree: true });
 };
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', keepVoiceAgentCentered, { once: true });
+  document.addEventListener('DOMContentLoaded', keepVoiceAgentPlaced, { once: true });
 } else {
-  keepVoiceAgentCentered();
+  keepVoiceAgentPlaced();
 }
 
 const voiceAgentPositionTimer = window.setInterval(() => {
-  keepVoiceAgentCentered();
+  keepVoiceAgentPlaced();
   if (voiceAgentObserver) window.clearInterval(voiceAgentPositionTimer);
 }, 250);
