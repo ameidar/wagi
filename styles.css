@@ -416,11 +416,32 @@ h3 {
 
 /* sections */
 .steps-section,
+.about-section,
 .value-section,
 .cta-section {
   position: relative;
   z-index: 1;
   margin: 72px 0;
+}
+
+.about-section {
+  padding: clamp(30px, 5vw, 58px) 0 8px;
+  border-top: 1px solid rgba(37, 99, 235, 0.12);
+}
+
+.about-copy {
+  max-width: 620px;
+}
+
+.about-copy p {
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: clamp(1.06rem, 1.7vw, 1.22rem);
+  line-height: 1.82;
+}
+
+.about-copy p:last-child {
+  margin-bottom: 0;
 }
 
 .section-heading {
