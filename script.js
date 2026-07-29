@@ -1,4 +1,6 @@
 const header = document.querySelector('.site-header');
+const menuToggle = document.querySelector('.menu-toggle');
+const menuPanel = document.querySelector('#site-menu');
 
 const updateHeaderState = () => {
   if (!header) return;
@@ -7,6 +9,41 @@ const updateHeaderState = () => {
 
 updateHeaderState();
 window.addEventListener('scroll', updateHeaderState, { passive: true });
+
+const closeMenu = () => {
+  if (!menuToggle || !menuPanel) return;
+  menuToggle.setAttribute('aria-expanded', 'false');
+  menuPanel.hidden = true;
+};
+
+const toggleMenu = () => {
+  if (!menuToggle || !menuPanel) return;
+  const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+  menuToggle.setAttribute('aria-expanded', String(!isOpen));
+  menuPanel.hidden = isOpen;
+};
+
+menuToggle?.addEventListener('click', (event) => {
+  event.stopPropagation();
+  toggleMenu();
+});
+
+menuPanel?.addEventListener('click', (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  const link = target?.closest('a');
+  if (link) closeMenu();
+});
+
+document.addEventListener('click', (event) => {
+  if (!menuPanel || menuPanel.hidden) return;
+  const target = event.target instanceof Element ? event.target : null;
+  if (target?.closest('.compact-menu')) return;
+  closeMenu();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeMenu();
+});
 
 let voiceAgentObserver = null;
 let voiceAgentWasDragged = false;
