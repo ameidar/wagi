@@ -207,7 +207,6 @@ const playVoiceAgentIntro = () => {
     utterance.pitch = 1;
     utterance.voice = chooseHebrewVoice();
     utterance.onend = stopIntroState;
-    utterance.onerror = stopIntroState;
 
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
