@@ -16,7 +16,7 @@ const VOICE_AGENT_OVERRIDE_ID = 'wagi-voice-agent-layout-override';
 const VOICE_AGENT_SIZE = 'clamp(112px, 9vw, 132px)';
 const VOICE_AGENT_EDGE_GAP = 'clamp(14px, 2vw, 24px)';
 const VOICE_AGENT_INTRO_STORAGE_KEY = 'wagi_voice_agent_intro_played';
-const VOICE_AGENT_INTRO_TEXT = 'היי, אני Wagi. אפשר לשאול אותי על ביטוח לחיית המחמד שלך.';
+const VOICE_AGENT_INTRO_TEXT = 'לחצו עליי כדי שאדבר או אשתוק.';
 
 const setImportant = (element, property, value) => {
   if (
@@ -187,12 +187,17 @@ const playVoiceAgentIntro = () => {
     status.classList.add('wagi-intro-status', 'is-visible');
   }
 
-  const stopIntroState = () => {
+  const stopSpeakingState = () => {
     bubble.classList.remove('wagi-pre-speaking');
-    status?.classList.remove('wagi-intro-status');
   };
 
-  window.setTimeout(stopIntroState, 5200);
+  const hideIntroState = () => {
+    stopSpeakingState();
+    status?.classList.remove('wagi-intro-status', 'is-visible');
+  };
+
+  bubble.addEventListener('click', hideIntroState, { once: true });
+  window.setTimeout(stopSpeakingState, 5200);
 
   if (!('speechSynthesis' in window)) return;
 
@@ -206,7 +211,7 @@ const playVoiceAgentIntro = () => {
     utterance.rate = 0.95;
     utterance.pitch = 1;
     utterance.voice = chooseHebrewVoice();
-    utterance.onend = stopIntroState;
+    utterance.onend = stopSpeakingState;
 
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
