@@ -131,7 +131,7 @@ a {
 .wagi-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   direction: ltr;
   margin-bottom: 64px;
 }
@@ -154,26 +154,6 @@ a {
   background: #bfe2ff;
   color: #1147ad;
   margin: 0 6px;
-}
-
-.wagi-nav {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  direction: rtl;
-}
-
-.wagi-nav a {
-  padding: 8px 14px;
-  border-radius: 999px;
-  color: #1147ad;
-  font-weight: 700;
-  font-size: 16px;
-  transition: 180ms ease;
-}
-
-.wagi-nav a:hover {
-  background: #eaf3ff;
 }
 
 .hero-content h1 {
@@ -275,13 +255,10 @@ a {
 
 @media (max-width: 600px) {
   .wagi-hero { padding: 16px 6px 0; }
-  .wagi-header { margin-bottom: 40px; }
-  .wagi-header .logo { font-size: 32px; }
-  .wagi-header .logo span { width: 44px; height: 44px; }
-  .wagi-nav { gap: 2px; }
-  .wagi-nav a { padding: 6px 8px; font-size: 13px; }
-  .chat-avatar { width: 96px; height: 96px; top: 49%; inset-inline-end: 14px; }
-  .chat-avatar span { width: 40px; height: 40px; font-size: 20px; }
+  .wagi-header { justify-content: center; margin-bottom: 40px; }
+  .wagi-header .logo { font-size: 34px; }
+  .wagi-header .logo span { width: 46px; height: 46px; }
+  .chat-avatar { display: none; }
 }
 
 .eyebrow {
