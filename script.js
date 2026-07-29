@@ -10,10 +10,13 @@ window.addEventListener('scroll', updateHeaderState, { passive: true });
 
 let voiceAgentObserver = null;
 let voiceAgentWasDragged = false;
+let voiceAgentIntroScheduled = false;
 
 const VOICE_AGENT_OVERRIDE_ID = 'wagi-voice-agent-layout-override';
-const VOICE_AGENT_SIZE = 'clamp(100px, 8vw, 118px)';
+const VOICE_AGENT_SIZE = 'clamp(112px, 9vw, 132px)';
 const VOICE_AGENT_EDGE_GAP = 'clamp(14px, 2vw, 24px)';
+const VOICE_AGENT_INTRO_STORAGE_KEY = 'wagi_voice_agent_intro_played';
+const VOICE_AGENT_INTRO_TEXT = 'היי, אני Wagi. אפשר לשאול אותי על ביטוח לחיית המחמד שלך.';
 
 const setImportant = (element, property, value) => {
   if (
@@ -58,11 +61,46 @@ const positionVoiceAgent = () => {
         inset: -10% !important;
       }
 
+      .bubble.wagi-pre-speaking {
+        box-shadow:
+          0 20px 62px rgba(34, 211, 238, 0.38),
+          0 0 0 4px rgba(34, 211, 238, 0.95),
+          0 0 0 14px rgba(34, 211, 238, 0.2) !important;
+      }
+
+      .bubble.wagi-pre-speaking .mouth-open {
+        animation: wagiPreSpeakMouth 0.34s ease-in-out infinite !important;
+      }
+
+      .bubble.wagi-pre-speaking .mouth-o {
+        animation: wagiPreSpeakMouthSoft 0.34s ease-in-out infinite !important;
+      }
+
+      @keyframes wagiPreSpeakMouth {
+        0%, 100% { opacity: 0; }
+        48%, 74% { opacity: 0.92; }
+      }
+
+      @keyframes wagiPreSpeakMouthSoft {
+        0%, 100% { opacity: 0; }
+        24%, 52% { opacity: 0.58; }
+      }
+
       .permission {
         left: 0 !important;
         right: auto !important;
         top: auto !important;
         bottom: calc(var(--wagi-agent-size) + 14px) !important;
+      }
+
+      .status.wagi-intro-status {
+        display: block !important;
+        max-width: min(260px, calc(100vw - 32px)) !important;
+        background: rgba(7, 18, 47, 0.92) !important;
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+        padding: 9px 12px !important;
+        pointer-events: none !important;
       }
 
       .chat-toggle,
@@ -127,9 +165,70 @@ const trackVoiceAgentDrag = () => {
   });
 };
 
+const chooseHebrewVoice = () => {
+  if (!('speechSynthesis' in window)) return null;
+  return window.speechSynthesis
+    .getVoices()
+    .find((voice) => /^he([-_]|$)/i.test(voice.lang) || /hebrew|עברית/i.test(voice.name));
+};
+
+const playVoiceAgentIntro = () => {
+  const host = document.getElementById('opal-voice-avatar-wagi');
+  const shadow = host?.shadowRoot;
+  const bubble = shadow?.querySelector('.bubble');
+  const status = shadow?.querySelector('.status');
+  if (!bubble || bubble.dataset.wagiIntroStarted === 'true') return;
+
+  bubble.dataset.wagiIntroStarted = 'true';
+  bubble.classList.add('wagi-pre-speaking');
+
+  if (status) {
+    status.textContent = VOICE_AGENT_INTRO_TEXT;
+    status.classList.add('wagi-intro-status', 'is-visible');
+  }
+
+  const stopIntroState = () => {
+    bubble.classList.remove('wagi-pre-speaking');
+    status?.classList.remove('wagi-intro-status');
+  };
+
+  window.setTimeout(stopIntroState, 5200);
+
+  if (!('speechSynthesis' in window)) return;
+
+  try {
+    const alreadyPlayed = window.sessionStorage.getItem(VOICE_AGENT_INTRO_STORAGE_KEY) === 'true';
+    if (alreadyPlayed) return;
+    window.sessionStorage.setItem(VOICE_AGENT_INTRO_STORAGE_KEY, 'true');
+
+    const utterance = new SpeechSynthesisUtterance(VOICE_AGENT_INTRO_TEXT);
+    utterance.lang = 'he-IL';
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+    utterance.voice = chooseHebrewVoice();
+    utterance.onend = stopIntroState;
+    utterance.onerror = stopIntroState;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    // Keep the visual greeting when the browser blocks automatic speech.
+  }
+};
+
+const scheduleVoiceAgentIntro = () => {
+  if (voiceAgentIntroScheduled) return;
+  voiceAgentIntroScheduled = true;
+  window.setTimeout(playVoiceAgentIntro, 900);
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.addEventListener?.('voiceschanged', playVoiceAgentIntro, { once: true });
+  }
+};
+
 const keepVoiceAgentPlaced = () => {
   if (!positionVoiceAgent()) return;
   trackVoiceAgentDrag();
+  scheduleVoiceAgentIntro();
   if (voiceAgentObserver) return;
 
   const host = document.getElementById('opal-voice-avatar-wagi');
