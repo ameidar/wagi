@@ -55,8 +55,6 @@ const voiceAgentAudioTracks = new Set();
 const VOICE_AGENT_OVERRIDE_ID = 'wagi-voice-agent-layout-override';
 const VOICE_AGENT_SIZE = 'clamp(112px, 9vw, 132px)';
 const VOICE_AGENT_EDGE_GAP = 'clamp(14px, 2vw, 24px)';
-const VOICE_AGENT_INTRO_STORAGE_KEY = 'wagi_voice_agent_intro_played';
-const VOICE_AGENT_INTRO_TEXT = 'לחצו עליי כדי שאדבר או אשתוק.';
 const VOICE_AGENT_MUTE_BUTTON_ID = 'wagi-mic-mute-button';
 const VOICE_AGENT_MUTE_STYLE_ID = 'wagi-mic-mute-button-style';
 
@@ -263,16 +261,6 @@ const positionVoiceAgent = () => {
         bottom: calc(var(--wagi-agent-size) + 14px) !important;
       }
 
-      .status.wagi-intro-status {
-        display: block !important;
-        max-width: min(260px, calc(100vw - 32px)) !important;
-        background: rgba(7, 18, 47, 0.92) !important;
-        font-size: 13px !important;
-        line-height: 1.35 !important;
-        padding: 9px 12px !important;
-        pointer-events: none !important;
-      }
-
       .chat-toggle,
       .chat-panel {
         display: none !important;
@@ -338,27 +326,14 @@ const trackVoiceAgentDrag = () => {
   });
 };
 
-const chooseHebrewVoice = () => {
-  if (!('speechSynthesis' in window)) return null;
-  return window.speechSynthesis
-    .getVoices()
-    .find((voice) => /^he([-_]|$)/i.test(voice.lang) || /hebrew|עברית/i.test(voice.name));
-};
-
 const playVoiceAgentIntro = () => {
   const host = document.getElementById('opal-voice-avatar-wagi');
   const shadow = host?.shadowRoot;
   const bubble = shadow?.querySelector('.bubble');
-  const status = shadow?.querySelector('.status');
   if (!bubble || bubble.dataset.wagiIntroStarted === 'true') return;
 
   bubble.dataset.wagiIntroStarted = 'true';
   bubble.classList.add('wagi-pre-speaking');
-
-  if (status) {
-    status.textContent = VOICE_AGENT_INTRO_TEXT;
-    status.classList.add('wagi-intro-status', 'is-visible');
-  }
 
   const stopSpeakingState = () => {
     bubble.classList.remove('wagi-pre-speaking');
@@ -366,40 +341,16 @@ const playVoiceAgentIntro = () => {
 
   const hideIntroState = () => {
     stopSpeakingState();
-    status?.classList.remove('wagi-intro-status', 'is-visible');
   };
 
   bubble.addEventListener('click', hideIntroState, { once: true });
   window.setTimeout(stopSpeakingState, 5200);
-
-  if (!('speechSynthesis' in window)) return;
-
-  try {
-    const alreadyPlayed = window.sessionStorage.getItem(VOICE_AGENT_INTRO_STORAGE_KEY) === 'true';
-    if (alreadyPlayed) return;
-    window.sessionStorage.setItem(VOICE_AGENT_INTRO_STORAGE_KEY, 'true');
-
-    const utterance = new SpeechSynthesisUtterance(VOICE_AGENT_INTRO_TEXT);
-    utterance.lang = 'he-IL';
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    utterance.voice = chooseHebrewVoice();
-    utterance.onend = stopSpeakingState;
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  } catch {
-    // Keep the visual greeting when the browser blocks automatic speech.
-  }
 };
 
 const scheduleVoiceAgentIntro = () => {
   if (voiceAgentIntroScheduled) return;
   voiceAgentIntroScheduled = true;
   window.setTimeout(playVoiceAgentIntro, 900);
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.addEventListener?.('voiceschanged', playVoiceAgentIntro, { once: true });
-  }
 };
 
 const keepVoiceAgentPlaced = () => {
