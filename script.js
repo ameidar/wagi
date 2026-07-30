@@ -326,6 +326,49 @@ const trackVoiceAgentDrag = () => {
   });
 };
 
+const clickVoiceAgentBubble = () => {
+  const host = document.getElementById('opal-voice-avatar-wagi');
+  const shadow = host?.shadowRoot;
+  const bubble = shadow?.querySelector('.bubble');
+  if (!bubble) return false;
+
+  bubble.classList.remove('wagi-pre-speaking');
+
+  try {
+    bubble.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, pointerType: 'mouse', isPrimary: true }));
+    bubble.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1, pointerType: 'mouse', isPrimary: true }));
+  } catch {
+    bubble.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    bubble.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+  }
+
+  bubble.click();
+  return true;
+};
+
+const activateVoiceAgentFromPageButton = () => {
+  if (clickVoiceAgentBubble()) return;
+
+  const startSection = document.getElementById('start');
+  startSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  let attempts = 0;
+  const activationTimer = window.setInterval(() => {
+    attempts += 1;
+    if (clickVoiceAgentBubble() || attempts >= 16) {
+      window.clearInterval(activationTimer);
+    }
+  }, 250);
+};
+
+document.querySelectorAll('a[href="#start"]').forEach((button) => {
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeMenu();
+    activateVoiceAgentFromPageButton();
+  });
+});
+
 const playVoiceAgentIntro = () => {
   const host = document.getElementById('opal-voice-avatar-wagi');
   const shadow = host?.shadowRoot;
