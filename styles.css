@@ -264,40 +264,6 @@ a {
 }
 .secondary-btn:hover { transform: translateY(-2px); }
 
-.chat-avatar {
-  position: absolute;
-  inset-inline-end: 30px;
-  top: 46%;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 8px solid #fff;
-  background: #7ec2ff;
-  box-shadow: 0 12px 28px rgba(17, 63, 159, 0.22);
-}
-
-.chat-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.chat-avatar span {
-  position: absolute;
-  inset-inline-end: -10px;
-  bottom: 4px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: #154fbd;
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-size: 26px;
-  border: 5px solid #fff;
-}
-
 .clinic-image {
   margin-top: 28px;
   width: 100%;
@@ -315,7 +281,6 @@ a {
   .wagi-header { justify-content: center; margin-bottom: 40px; }
   .wagi-header .logo { font-size: 34px; }
   .wagi-header .logo span { width: 46px; height: 46px; }
-  .chat-avatar { display: none; }
 }
 
 .eyebrow {
