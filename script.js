@@ -48,12 +48,78 @@ document.addEventListener('keydown', (event) => {
 let voiceAgentObserver = null;
 let voiceAgentWasDragged = false;
 let voiceAgentIntroScheduled = false;
+let voiceAgentMicMuted = false;
+
+const voiceAgentAudioTracks = new Set();
 
 const VOICE_AGENT_OVERRIDE_ID = 'wagi-voice-agent-layout-override';
 const VOICE_AGENT_SIZE = 'clamp(112px, 9vw, 132px)';
 const VOICE_AGENT_EDGE_GAP = 'clamp(14px, 2vw, 24px)';
 const VOICE_AGENT_INTRO_STORAGE_KEY = 'wagi_voice_agent_intro_played';
 const VOICE_AGENT_INTRO_TEXT = 'לחצו עליי כדי שאדבר או אשתוק.';
+const VOICE_AGENT_MUTE_BUTTON_CLASS = 'wagi-mic-mute-button';
+
+const updateVoiceAgentAudioTracks = () => {
+  voiceAgentAudioTracks.forEach((track) => {
+    if (track.readyState === 'ended') {
+      voiceAgentAudioTracks.delete(track);
+      return;
+    }
+
+    track.enabled = !voiceAgentMicMuted;
+  });
+};
+
+const rememberVoiceAgentStream = (stream) => {
+  if (!stream?.getAudioTracks) return stream;
+
+  stream.getAudioTracks().forEach((track) => {
+    voiceAgentAudioTracks.add(track);
+    track.enabled = !voiceAgentMicMuted;
+    track.addEventListener?.('ended', () => voiceAgentAudioTracks.delete(track), { once: true });
+  });
+
+  return stream;
+};
+
+if (navigator.mediaDevices?.getUserMedia && navigator.mediaDevices.getUserMedia.dataset?.wagiTracked !== 'true') {
+  const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+  const trackedGetUserMedia = (...args) => originalGetUserMedia(...args).then(rememberVoiceAgentStream);
+  trackedGetUserMedia.dataset = { wagiTracked: 'true' };
+  navigator.mediaDevices.getUserMedia = trackedGetUserMedia;
+}
+
+const syncVoiceAgentMuteButton = (button) => {
+  button.type = 'button';
+  button.className = `${VOICE_AGENT_MUTE_BUTTON_CLASS}${voiceAgentMicMuted ? ' is-muted' : ''}`;
+  button.setAttribute('aria-pressed', String(voiceAgentMicMuted));
+  button.setAttribute('aria-label', voiceAgentMicMuted ? 'להחזיר מיקרופון' : 'להשתיק מיקרופון');
+  button.title = voiceAgentMicMuted ? 'להחזיר מיקרופון' : 'להשתיק מיקרופון';
+  button.textContent = voiceAgentMicMuted ? '🔇' : '🎙️';
+};
+
+const toggleVoiceAgentMicMute = (button) => {
+  voiceAgentMicMuted = !voiceAgentMicMuted;
+  updateVoiceAgentAudioTracks();
+  syncVoiceAgentMuteButton(button);
+};
+
+const ensureVoiceAgentMuteButton = (shadow, wrap) => {
+  let button = shadow.querySelector(`.${VOICE_AGENT_MUTE_BUTTON_CLASS}`);
+
+  if (!button) {
+    button = document.createElement('button');
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleVoiceAgentMicMute(button);
+    });
+    button.addEventListener('pointerdown', (event) => event.stopPropagation());
+    wrap.appendChild(button);
+  }
+
+  syncVoiceAgentMuteButton(button);
+};
 
 const setImportant = (element, property, value) => {
   if (
@@ -92,6 +158,36 @@ const positionVoiceAgent = () => {
       .bubble img {
         width: var(--wagi-agent-size) !important;
         height: var(--wagi-agent-size) !important;
+      }
+
+      .${VOICE_AGENT_MUTE_BUTTON_CLASS} {
+        position: absolute !important;
+        right: -3px !important;
+        bottom: -3px !important;
+        width: clamp(34px, 2.8vw, 42px) !important;
+        height: clamp(34px, 2.8vw, 42px) !important;
+        border: 0 !important;
+        border-radius: 999px !important;
+        display: grid !important;
+        place-items: center !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        box-shadow: 0 12px 34px rgba(15, 23, 42, 0.24) !important;
+        cursor: pointer !important;
+        font-size: clamp(17px, 1.6vw, 21px) !important;
+        line-height: 1 !important;
+        padding: 0 !important;
+        z-index: 3 !important;
+      }
+
+      .${VOICE_AGENT_MUTE_BUTTON_CLASS}.is-muted {
+        background: #ef4444 !important;
+        color: #ffffff !important;
+      }
+
+      .${VOICE_AGENT_MUTE_BUTTON_CLASS}:focus-visible {
+        outline: 3px solid rgba(34, 211, 238, 0.95) !important;
+        outline-offset: 3px !important;
       }
 
       .pulse {
@@ -175,6 +271,8 @@ const positionVoiceAgent = () => {
     setImportant(chatPanel, 'visibility', 'hidden');
     setImportant(chatPanel, 'pointer-events', 'none');
   }
+
+  ensureVoiceAgentMuteButton(shadow, wrap);
 
   return true;
 };
