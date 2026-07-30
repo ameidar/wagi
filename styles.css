@@ -264,6 +264,10 @@ a {
 }
 .secondary-btn:hover { transform: translateY(-2px); }
 
+.chat-avatar {
+  display: none !important;
+}
+
 .clinic-image {
   margin-top: 28px;
   width: 100%;
